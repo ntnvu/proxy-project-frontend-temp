@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Viewer</title>
+</head>
+<body>
+<h1>Image Viewer</h1>
+<div id="imageContainer"></div>
+<input type="text" id="clientIdInput" placeholder="Enter client ID">
+
+<script>
+    const imageUrls = [
+        'https://assets-prd.ignimgs.com/2022/08/17/top25animecharacters-blogroll-1660777571580.jpg',
+        'https://cdn.pixabay.com/photo/2023/04/30/04/29/anime-7959691_960_720.jpg',
+        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSk6OCn0t1mJfoNl7rr1zCDzHCN4VO3bd9TFg&s',
+        'https://i.ytimg.com/vi/xXmXM0qRMbo/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLB90-BoM0kbWPqAXvkoAeTG2ZsFgA',
+        'https://t4.ftcdn.net/jpg/06/22/22/17/360_F_622221708_Gg16ZdaNSixeaIORq9MuuT4w9VWTkYw4.jpg'
+    ];
+    const imageContainer = document.getElementById('imageContainer');
+
+    imageUrls.forEach(url => {
+        const img = document.createElement('img');
+        img.src = url;
+        img.width = 300;
+        img.addEventListener('click', () => {
+            const clientId = document.getElementById('clientIdInput').value;
+            const targetUrl = encodeURIComponent(url);
+            const requestUrl = `http://localhost:3020/?client_id=${clientId}&target_url=${targetUrl}`;
+
+            fetch(requestUrl)
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    console.log('Response headers:', response.headers);
+                    return response.blob();
+                })
+                .then(blob => {
+                    console.log('Response data:', blob);
+                    const imgUrl = URL.createObjectURL(blob);
+                    window.open(imgUrl, '_blank');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to load image');
+                });
+        });
+        imageContainer.appendChild(img);
+    });
+</script>
+</body>
+</html>
